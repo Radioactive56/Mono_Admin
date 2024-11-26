@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
 import Navbar from './Navbar';
+import { API_URL } from '../App';
 
 export default function User() {
   const items=[
@@ -13,7 +14,7 @@ export default function User() {
   const [meta_user_Errors,meta_usersetErrors]=useState(null)
 
   useEffect(()=>{
-    const api_url="/api/getuser"
+    const api_url=`${API_URL}/getuser`
     
     fetch(api_url)
     .then(response=>{
@@ -40,32 +41,7 @@ export default function User() {
         console.error('Error fetching data:', meta_user_Errors);
     });
 },[])
-    // const stored_data=localStorage.getItem('users');
 
-    // const parsed_data=JSON.parse(stored_data);
-    
-    // const filtered_data=parsed_data.map(
-    //     x=>({
-    //         username:x.username,
-    //         permission_Staff_status:x.permission_Staff_status,
-    //         permission_active_status:x.permission_active_status,
-    //         permission_Superuser_status:x.permission_Superuser_status,
-    //         privilege: x.privilege&&x.privilege.length>0?x.privilege.map(privilege=>privilege[Object.keys(privilege)[1]]).join(', '):""
-    //     })
-    // );
-    // const [rows,setRows]=useState(filtered_data);
-
-    // let searchForm=document.getElementById("searchForm")
-
-    // const handlesubmit=(event) => {
-    //     event.preventDefault();
-    //     let ll=JSON.parse(localStorage.getItem('users'));
-    //     let x= document.getElementById('query').value;
-    //     const search_data = ll.filter(obj=>obj.username===x);
-    //     setRows(search_data);
-
-    //     }
-    
     const columns = [
         {
           field: 'username',

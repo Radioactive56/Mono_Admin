@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid,GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router';
+import { API_URL } from '../App';
 
 function CustomToolbar() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function HostTable() {
       navigate('/scans');
     }
     useEffect(()=>{
-        const api_url= "/api/host/" 
+        const api_url= `${API_URL}/host/` 
         fetch(api_url)
               .then(response => {
                 if (!response.ok) {

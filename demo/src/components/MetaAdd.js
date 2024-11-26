@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router'
 import Navbar from './Navbar';
+import { API_URL } from '../App';
+
 
 export default function MetaAdd() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate=useNavigate();
     const onSubmit=(data)=>{
-        fetch('http://localhost:8000/api/addMeta/',{
+        fetch(`${API_URL}/addMeta/`,{
             method:"POST",
             headers:{
                 'Content-Type':'application/json'

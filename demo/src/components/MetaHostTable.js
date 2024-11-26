@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid,GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router';
+import { API_URL } from '../App';
 
 
 function CustomToolbar() {
@@ -20,7 +21,7 @@ export default function MetaHostTabel() {
     const [meta_host_data,set_meta_host_data]=useState('');
 
     useEffect(()=>{
-        const api_url="/api/meta_host";
+        const api_url=`${API_URL}/meta_host`;
 
         fetch(api_url)
             .then(response=>{

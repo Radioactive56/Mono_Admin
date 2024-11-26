@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router'
 import Navbar from './Navbar';
 import { _getAbsoluteHeight } from 'ag-grid-enterprise';
+import { API_URL } from '../App';
 
 export default function Update() {
     const {id}=useParams();
@@ -11,7 +12,7 @@ export default function Update() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
     const handleClick=async()=>{
-      fetch(`http://localhost:8000/api/metaDelete/${id}/`,{
+      fetch(`${API_URL}/metaDelete/${id}/`,{
         method:"DELETE",
       })
         .then((response)=>{
@@ -27,7 +28,7 @@ export default function Update() {
 
     useEffect(()=>{
         if (id){
-        fetch(`/api/getmeta/${id}`)
+        fetch(`${API_URL}/getmeta/${id}`)
         .then((response)=>{
             if (!response.ok){
                 console.log('error calling api');

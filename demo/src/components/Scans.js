@@ -11,13 +11,13 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-g
 import Navbar from './Navbar';
 import MetaScan from './MetaScan';
 import { useNavigate } from 'react-router';
-
+import { API_URL } from '../App';
 
 const CustomToolbar=({selected_scan_id,})=>{
     const navigate = useNavigate();
 
     const handleDelete = async()=>{
-        fetch(`http://localhost:8000/api/scanDelete/`,{
+        fetch(`${API_URL}/scanDelete/`,{
             method:"POST",
             headers:{
                 'Content-Type':'application/json'

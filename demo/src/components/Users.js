@@ -3,6 +3,7 @@ import { useForm,Controller } from 'react-hook-form';
 import Select from 'react-select';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router';
+import { API_URL } from '../App';
 
 export default function Users() {
   const items=[
@@ -14,7 +15,7 @@ export default function Users() {
   const onSubmit = data => {
     console.log(data);
 
-    fetch("api/addUser/",{
+    fetch(`${API_URL}/addUser/`,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body : JSON.stringify(data),

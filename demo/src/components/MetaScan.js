@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router';
+import { API_URL } from '../App';
 
 
 const CustomToolbar=({selected_scan_id})=>{
@@ -65,7 +66,7 @@ export default function MetaScan() {
 
     useEffect(()=>{
         setloading(true);
-        const meta_url="/api/meta/"
+        const meta_url=`${API_URL}/api/meta/`
         fetch(meta_url)
         .then(response=>{
             if (!response.ok) {

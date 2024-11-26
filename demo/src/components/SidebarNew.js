@@ -7,19 +7,23 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import StorageIcon from '@mui/icons-material/Storage';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import GroupIcon from '@mui/icons-material/Group';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuth } from './AuthContext';
+import Cookies from 'js-cookie';
+
 
 
 export default function SidebarNew() {
-
-    const { logout }=useAuth();
+    const navigate = useNavigate();
+    const logout =()=>{
+      Cookies.remove('Token');
+      navigate('/');
+    }
     const mystyle = {
         color: "white",
         fontSize: '1.5rem',

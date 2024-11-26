@@ -2,7 +2,8 @@ from django.shortcuts import render
 from .models import Meta_Dashboard,Nmap_Core_Dashboard,Scan,Host,Meta_Host_Table,Meta_Service_Table,Meta_Vulnerability_Table,Meta_Scan_Table
 from .serializers import Meta_serializer,Nmap_serializer,Scan_Serializer,Host_Serializer,Meta_Host_Serializer,Service_Serializer,Vulnerability_Serializer,Meta_scan_Serializer,UserSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 import json
 from django.contrib.auth.models import User,Permission
@@ -10,8 +11,14 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import csv
 import pandas as pd
-# Create your views here.
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from datetime import timedelta
+from django.utils import timezone
 
+
+# Create your views here.
+@permission_classes([IsAuthenticated])
 @api_view(["GET"])
 def get_meta(request):
     if request.method=="GET":
@@ -20,6 +27,7 @@ def get_meta(request):
         return Response(meta_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_meta_id(request,id):
     if request.method=='GET':
@@ -29,6 +37,7 @@ def get_meta_id(request,id):
     else:
         return Response([],status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def addscantable(request):
     item=Scan_Serializer(data=request.data)
@@ -39,6 +48,7 @@ def addscantable(request):
         print(item.errors)
         return Response({},status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def addMeta(request):
     data1 = json.loads(request.body)
@@ -52,6 +62,7 @@ def addMeta(request):
         print(item.errors)
         return Response(item.errors,status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([IsAuthenticated])
 @api_view(['PUT'])
 def update_meta_id(request,id):
     item=Meta_Dashboard.objects.filter(Pending_id=id)
@@ -62,6 +73,7 @@ def update_meta_id(request,id):
         return Response({},status=status.HTTP_200_OK)
     return Response({},status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([IsAuthenticated])
 @api_view(['DELETE'])
 def delete_meta_id(request,id):
     item=Meta_Dashboard.objects.filter(Pending_id=id)
@@ -71,6 +83,7 @@ def delete_meta_id(request,id):
     else:
         return Response({},status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_nmap(request):
     if request.method=="GET":
@@ -79,6 +92,7 @@ def get_nmap(request):
         return Response(new_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_scan(request):
     if request.method=="GET":
@@ -87,6 +101,7 @@ def get_scan(request):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_nmap_by_id(request,id):
     if request.method=="GET":
@@ -95,6 +110,7 @@ def get_nmap_by_id(request,id):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_host(request):
     if request.method=="GET":
@@ -103,6 +119,7 @@ def get_host(request):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_meta_host(request):
     if request.method=="GET":
@@ -111,6 +128,7 @@ def get_meta_host(request):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_meta_service(request):
     if request.method=="GET":
@@ -119,7 +137,7 @@ def get_meta_service(request):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
-
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def get_meta_vulnerability(request):
     if request.method=="GET":
@@ -128,6 +146,7 @@ def get_meta_vulnerability(request):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
+@permission_classes([IsAuthenticated])
 @api_view(["GET"])
 def get_meta_scan(request):
     if request.method=="GET":
@@ -136,22 +155,29 @@ def get_meta_scan(request):
         return Response(serialized_data.data,status=status.HTTP_200_OK)
     return Response([],status=status.HTTP_404_NOT_FOUND)
 
-@api_view(["POST"])
+
+@api_view(['POST'])
 def check_login(request):
-    if request.method=="POST":
-        data = json.loads(request.body)
-        username=data.get('username')
-        password=data.get('password')
-        try:
-            user=User.objects.get(username=username)
-            if user and user.check_password(password):
-                permission_list=user.get_all_permissions()
-                # permission_list=str(permission_lists)
-                print(permission_list)
-                permission_len=len(user.get_all_permissions())
-                return Response({'data':permission_list,'authenticated':True},status=status.HTTP_200_OK)
-        except:
-            return Response({'authenticated':False},status=status.HTTP_404_NOT_FOUND)
+    data = json.loads(request.body)
+    print(data)
+    username= data.get('username')
+    password= data.get('password')
+    user = authenticate(username=username,password=password)
+    print(user)
+    if user:
+        token,created = Token.objects.get_or_create(user=user)
+        expiry_time = timezone.now()+timedelta(minutes=60)
+        response = Response("Login Successfull",status=status.HTTP_200_OK)
+        response.set_cookie("Token",token.key,expires=expiry_time,secure=True)
+        return response
+    else:
+        return Response({"error":"Invalid Login"},status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAuthenticated])
+@api_view(["GET"])
+def validate(request):
+    return Response({'message':'token is valid'},status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 def send_users(request):
@@ -196,6 +222,20 @@ def delete_scan(request,id):
             return Response({},status=status.HTTP_200_OK)
         except:
             return Response({},status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def delete_multiple_scan(request):
+    data = json.loads(request.body)
+    c=len(data)
+    d=0
+    for i in data:
+        d+=1
+        item = Nmap_Core_Dashboard.objects.filter(Scan_id=i)
+        item[0].delete()
+    if d==c:
+        return Response([],status=status.HTTP_200_OK)
+    else:
+        return Response([],status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
 def add_user(request):

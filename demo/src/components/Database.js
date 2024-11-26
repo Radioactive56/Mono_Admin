@@ -14,6 +14,7 @@ import MetaVulnerabilityTable from './MetaVulnerabilityTable'
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid,GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router';
+import { API_URL } from '../App';
 
 function CustomToolbar() {
     const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function DataBase() {
 
     useEffect(()=>{
 
-        const scan_url="/api/scan/";
+        const scan_url=`${API_URL}/scan/`;
 
         fetch(scan_url)
               .then(response => {

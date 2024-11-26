@@ -1,16 +1,19 @@
 import React from 'react'
 import Sidebar from './Sidebar';
 import PropTypes from 'prop-types';
-import DarkMode from './DarkMode';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SidebarNew from './SidebarNew';
 import Dropdown from './Dropdown';
-import { useAuth } from './AuthContext';
+import Cookies from 'js-cookie'
 
 
 export default function Navbar({title}) {
-  const {user}=useAuth();
-  const {logout}=useAuth();
+  const navigate = useNavigate();  
+  const logout =()=>{
+      Cookies.remove('Token')
+      navigate('/')
+    }
+
     const navbar = {
         background : "linear-gradient(90deg,#007991 0% ,#78ffd6 100%)",
         color: "antiquewhite"
@@ -27,11 +30,8 @@ export default function Navbar({title}) {
             <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">{title}</span>
           </Link>
         <div className="flex items-center">
-          <div>
-            <DarkMode/>
-          </div>
             <div className="flex items-center ms-3">
-            <Dropdown username={user.username} onSignOut={logout}></Dropdown>
+            <Dropdown onSignOut={logout}></Dropdown>
           </div>
       </div>
     </div>

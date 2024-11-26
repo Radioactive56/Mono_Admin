@@ -1,4 +1,5 @@
 import React from 'react'
+import { API_URL } from '../App';
 
 export default function UpdateScanTable() {
   return (

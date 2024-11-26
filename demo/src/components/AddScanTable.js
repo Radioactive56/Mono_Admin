@@ -2,12 +2,13 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router'
 import Navbar from './Navbar';
+import { API_URL } from '../App';
 
 export default function AddScanTable() {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }} = useForm();
     const onSubmit=(data)=>{
-        const api_url="";
+        const api_url=`${API_URL}/addScan/`;
 
         fetch(api_url,{
             method:"POST",
