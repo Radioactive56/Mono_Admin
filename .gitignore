@@ -42,3 +42,4 @@ frontend/build/                 # Production build folder for React
 .idea/                           # IntelliJ IDEA settings
 *.sublime-workspace              # Sublime Text workspace file
 *.sublime-project                # Sublime Text project file
+node_modules
