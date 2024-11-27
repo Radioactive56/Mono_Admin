@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^13.5.0",
     "ag-grid-enterprise": "^32.0.2",
     "ag-grid-react": "^32.0.2",
+    "apexcharts": "^4.1.0",
     "cors": "^2.8.5",
     "flowbite": "^2.4.1",
     "js-cookie": "^3.0.5",
