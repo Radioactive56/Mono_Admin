@@ -51,6 +51,10 @@
     ]
   },
   "proxy": "http://localhost:8000",
+  "peerDependencies": {
+  "react": "^17.0.0 || ^18.0.0",
+  "react-dom": "^17.0.0 || ^18.0.0"
+},
   "devDependencies": {
     "tailwindcss": "^3.4.7"
   }
