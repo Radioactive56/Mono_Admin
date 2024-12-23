@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import Tab from '@mui/material/Tab';
 import HostTable from './HostTable';
 import MetaHostTable from './MetaHostTable';
@@ -15,23 +17,89 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid,GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router';
 import { API_URL } from '../App';
+import Cookies from 'js-cookie';
 
-function CustomToolbar() {
+
+
+
+const CustomToolbar=({selected_scan_id,})=>{
+    
     const navigate = useNavigate();
+    const token = Cookies.get('Token'); 
+    const handleDelete = async()=>{
+        fetch(`${API_URL}/scantableDelete/`,{
+            method:"POST",
+            headers:{
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body:JSON.stringify(selected_scan_id)
+    })
+    .then(response=>{
+        if (response.status===403){
+            alert("You dont have the permission to delete....")
+            window.location.reload('/database')
+        }
+        else if (!response.ok){
+          console.error('Error in calling the delete_multiple_scan api....')
+        }
+        else{
+            alert('Data Deleted successfully.... please refresh the page if the changes are not shown...')
+            window.location.reload('/database')
+        }
+    })
+    }
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+
+      const [open, setOpen] = React.useState(false);
+      const handleOpen = () => setOpen(true);
+      const handleClose = () => setOpen(false);
+
+    //   const handleDelete=()=>{
+    //     console.log(selected_scan_id)
+    //   }
+    
     return (
       <GridToolbarContainer>
         <GridToolbarExport />
         <div style={{display:"flex"}}>
-        <button type="button" onClick={()=>navigate('/addscanTable')} class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Add </button>
-        <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
+        <button type="button" onClick={handleOpen} class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
+        <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Do you really want to Delete the selected rows ? 
+          </Typography>
+          <div style={{display: 'flex',justifyContent: 'space-around',paddingTop: '5%'}}>
+          <button type="button" onClick={handleDelete} class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Yes</button>
+          <button type="button" onClick={handleClose} class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">No</button>
+          </div>
+        </Box>
+      </Modal>
         </div>
       </GridToolbarContainer>
     );
   }
 
 export default function DataBase() {
+    const [selected_scan_id,set_selected_scan_id] = useState([]);
     const [value,setValue] = useState('1');
-    const [scan_data,set_scan_data]=useState("")
+    const [scan_data,set_scan_data]=useState([])
     const [loading,setloading]=useState(true);
     const [selected_row,set_selected_row]=useState([]);
     const [error,setError]=useState(null);
@@ -46,9 +114,9 @@ export default function DataBase() {
         setValue(newValue);
     }
 
-    // const handleRowClick= (params)=>{
-    //     navigate(`/update/${params.id}`);
-    // }
+    const handleRowClick= (params)=>{
+        navigate(`/update_scantable/${params.id}`);
+    }
 
     useEffect(()=>{
 
@@ -56,10 +124,15 @@ export default function DataBase() {
 
         fetch(scan_url)
               .then(response => {
-                if (!response.ok) {
+                if (response.status === 404) {
                   throw new Error('Network response was not ok');
                 }
-                return response.json();
+                else if (response.ok){
+                    return response.json();
+                }
+                else{
+                    console.error('Error in calling /scan api.........')
+                }
               })
               .then(data => {
                 console.log(data) // Log the data to the console
@@ -67,7 +140,8 @@ export default function DataBase() {
               })
               .catch(error => {
                 setError(error);
-                console.error('Error fetching data:', error);
+                alert('You dont have the permission to view the table......')
+                set_scan_data([])
               })
               .finally(()=>{
                 setloading(false)
@@ -294,10 +368,10 @@ export default function DataBase() {
       ];
 
       const handleSelectionChange = (newSelection)=>{
-        set_selected_row(newSelection);
+        set_selected_scan_id(newSelection);
       }
 
-
+      console.log(selected_scan_id);
   
 
   return (
@@ -325,7 +399,7 @@ export default function DataBase() {
                 columns={scan_columns}
                 getRowId={(scan_data) => scan_data.scan_id}
                 slots={{
-                    toolbar: CustomToolbar,
+                    toolbar: ()=> <CustomToolbar selected_scan_id={selected_scan_id} />,
                 }}
                 initialState={{
                 pagination: {
@@ -333,10 +407,11 @@ export default function DataBase() {
                 },
                 }}
                 pageSizeOptions={[5, 10]}
+                onRowClick={handleRowClick}
                 checkboxSelection
                 onRowSelectionModelChange={handleSelectionChange}
             />
-            The selected rows are : {selected_row.join(', ')}
+            The selected rows are : {selected_scan_id.join(', ')}
             </div>            
             </TabPanel>
             <TabPanel value="2">

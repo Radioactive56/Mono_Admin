@@ -1,7 +1,62 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router'
+import Navbar from './Navbar';
+import Cookies from 'js-cookie';
+import { _getAbsoluteHeight } from 'ag-grid-enterprise';
 import { API_URL } from '../App';
 
+
 export default function UpdateScanTable() {
+  const {id}=useParams();
+  console.log(id);
+  const token = Cookies.get('Token'); 
+  const navigate=useNavigate();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  useEffect(()=>{
+      if (id){
+      fetch(`${API_URL}/getscan/${id}`,{
+        method:"GET",
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then((response)=>{
+          if (!response.ok){
+              console.log('error calling api');
+          }
+          return response.json();
+      })
+      .then((data)=>{
+          console.log(data[0]);
+          reset(data[0]);
+
+      })
+
+  }},[]);
+
+  const onSubmit=(data)=>{
+      console.log(data);
+
+      fetch(`${API_URL}/scantableUpdate/${id}/`,{
+          method:"PUT",
+          headers:{
+              'Content-Type':'application/json',
+              'Authorization': `Bearer ${token}`
+          },
+          body:JSON.stringify(data),
+      })
+      .then(response=>{
+          if (response.ok){
+              const data = response.json() 
+              alert("Data updated successfully!!!!");
+              navigate('/database');
+          }
+          console.log("Data Updation Failed!!")
+      })
+  }
   return (
        <>
         <Navbar title="ISAE ADMIN"/>

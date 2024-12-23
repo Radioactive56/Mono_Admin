@@ -5,10 +5,11 @@ import Modal from '@mui/material/Modal';
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router';
 import { API_URL } from '../App';
-
+import Cookies from 'js-cookie';
 
 const CustomToolbar=({selected_scan_id})=>{
   const navigate = useNavigate();
+  const token= Cookies.get('Token');
   const style = {
       position: 'absolute',
       top: '50%',
@@ -21,19 +22,39 @@ const CustomToolbar=({selected_scan_id})=>{
       p: 4,
     };
 
+    const handleDelete = async()=>{
+      fetch(`${API_URL}/metaDelete/`,{
+          method:"POST",
+          headers:{
+              'Content-Type':'application/json',
+              'Authorization': `Bearer ${token}`
+          },
+          body:JSON.stringify(selected_scan_id)
+  })
+  .then(response=>{
+      if (response.status===403){
+          alert("You dont have the permission to delete....")
+          window.location.reload('/scans')
+      }
+      else if (!response.ok){
+        console.error('Error in calling the delete_multiple_scan api....')
+      }
+      else{
+          alert('Data Deleted successfully.... please refresh the page if the changes are not shown...')
+          window.location.reload('/scans')
+      }
+  })
+  }
+
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleDelete=()=>{
-      console.log(selected_scan_id)
-    }
-  
   return (
     <GridToolbarContainer>
       <GridToolbarExport />
       <div style={{display:"flex"}}>
-      <button type="button" onClick={()=>navigate('/addScan')} class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Add </button>
+      <button type="button" onClick={()=>navigate('/addMeta')} class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Add </button>
       <button type="button" onClick={handleOpen} class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
       <Modal
       open={open}
@@ -66,20 +87,27 @@ export default function MetaScan() {
 
     useEffect(()=>{
         setloading(true);
-        const meta_url=`${API_URL}/api/meta/`
+        const meta_url=`${API_URL}/meta/`
         fetch(meta_url)
         .then(response=>{
-            if (!response.ok) {
+            if (response.status===404) {
                 throw new Error('Network response was not ok');
               }
-            return response.json();
+            else if (response.ok){
+              return response.json();
+            }
+            else{
+              console.error('Error in calling /meta api........')
+            }
         })
         .then(data=>{
             console.log(data);
             setmeta_data(data);
         })
         .catch(error=>{
-            setmeta_error(error);
+          alert('You dont have the permission to view the data.........')
+          console.error(error)
+          setmeta_data([]);
         })
         .finally(()=>{
             setloading(false);

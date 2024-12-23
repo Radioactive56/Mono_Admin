@@ -2,32 +2,25 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router'
 import Navbar from './Navbar';
+import Cookies from 'js-cookie';
 import { _getAbsoluteHeight } from 'ag-grid-enterprise';
 import { API_URL } from '../App';
 
 export default function Update() {
     const {id}=useParams();
+    const token = Cookies.get('Token'); 
     const navigate = useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-    const handleClick=async()=>{
-      fetch(`${API_URL}/scanDelete/${id}/`,{
-        method:"DELETE",
-      })
-        .then((response)=>{
-            if (!response.ok){
-                console.log('error calling api');
-            }
-            else{
-              alert("Data Deleted Successfully!")
-              navigate('/scans');
-            }
-        })
-    }
-
     useEffect(()=>{
         if (id){
-        fetch(`${API_URL}/nmap/${id}`)
+        fetch(`${API_URL}/nmap/${id}`,{
+          method:'GET',
+          headers:{
+             'Content-Type':'application/json',
+              'Authorization': `Bearer ${token}`
+          }
+        })
         .then((response)=>{
             if (!response.ok){
                 console.log('error calling api');
@@ -45,10 +38,11 @@ export default function Update() {
     const onSubmit=(data)=>{
         console.log(data);
 
-        fetch(`http://localhost:8000/api/scanUpdate/${id}/`,{
+        fetch(`${API_URL}/scanUpdate/${id}/`,{
             method:"PUT",
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body:JSON.stringify(data),
         })
@@ -58,7 +52,9 @@ export default function Update() {
                 alert("Data updated successfully!!!!");
                 navigate('/scans');
             }
-            console.log("Data Updation Failed!!")
+            else {
+            alert("'Couldn't update the data");
+            }
         })
     }
   return (

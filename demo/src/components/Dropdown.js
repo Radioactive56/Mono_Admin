@@ -3,7 +3,7 @@ import profile from './profile.png'
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
-const Dropdown = ({ username, onSignOut }) => {
+const Dropdown = ({ onSignOut }) => {
     const [anchorEl, setAnchorEl] = useState(null);
  
     const handleMenuOpen = (event) => {
@@ -13,6 +13,8 @@ const Dropdown = ({ username, onSignOut }) => {
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
+
+    const username = localStorage.getItem("name")
  
     return (
         <div>

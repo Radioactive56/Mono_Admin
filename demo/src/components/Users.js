@@ -4,12 +4,14 @@ import Select from 'react-select';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router';
 import { API_URL } from '../App';
+import Cookies from 'js-cookie';
 
 export default function Users() {
   const items=[
     {text:"Manav Dhruve"},
     {text:"md@tcs.com"}
   ];
+  const token = Cookies.get('Token');
   const { register, handleSubmit, control, formState: { errors } } = useForm();
   const navigate=useNavigate();
   const onSubmit = data => {
@@ -17,13 +19,17 @@ export default function Users() {
 
     fetch(`${API_URL}/addUser/`,{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json",'Authorization': `Bearer ${token}`
+
+      },
       body : JSON.stringify(data),
     })
     .then(response=>{
-    if (response.ok){
+    if (response.status===403){
+      alert('You dont have the permission to add the user..........')
+    }
+    else if (response.ok){
       const val = response.json();
-      console.log(val)
       window.alert("Data submitted successfully");
       navigate('/user')
     }

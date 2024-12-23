@@ -1,31 +1,37 @@
-
-
+// This the add of nmap_core dashboard in Scans sidebar.......
+import Cookies from 'js-cookie';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router'
 import Navbar from './Navbar';
 import { API_URL } from '../App';
+import { SliderRail } from '@mui/material';
 
 
 export default function Add(){
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate=useNavigate();
+    const token = Cookies.get('Token'); 
     const onSubmit=(data)=>{
         fetch(`${API_URL}/addScan/`,{
             method:"POST",
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body:JSON.stringify(data),
         })
         .then(response=>{
-            if (response.ok){
-                alert('Data Added Successfully')
-                navigate('/scans');
-            }
-            else{
-              alert('Error in Adding Data')
-            }
+          if (response.ok){
+            alert('Data added successfully')
+            navigate('/scans');
+          }
+          else if (response.status === 403){
+              alert("You dont have the permission to perform this function....")
+          }
+          else{
+            console.error("Error in calling the api....")
+          }
         })
     }
   return (

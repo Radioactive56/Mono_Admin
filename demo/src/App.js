@@ -12,6 +12,12 @@ import PrivateRoute from './components/PrivateRoute';
 import SidebarNew from './components/SidebarNew';
 import PtAgeing from './components/PtAgeing';
 import Update from './components/Update';
+import UpdateScanTable from './components/UpdateScanTable';
+import UpdateHostTable from './components/UpdateHostTable';
+import UpdateMetaScanTable from './components/UpdateMetaScanTable';
+import UpdateMetaHostTable from './components/UpdateMetaHostTable';
+import UpdateMetaServiceTable from './components/UpdateMetaServiceTable';
+import UpdateMetaVulnerability from './components/UpdateMetaVulnerability';
 import Add from './components/Add';
 import UpateMeta from './components/UpdateMeta';
 import MetaAdd from './components/MetaAdd';
@@ -20,6 +26,9 @@ import AddScanTable from './components/AddScanTable';
 
 export let API_URL = process.env.REACT_APP_API_URL
 
+// urls to be :'/analytics'
+
+//prt :8013
 
 function App(){
   return (
@@ -35,6 +44,12 @@ function App(){
           <Route exact path="/assetsummary" element={<PrivateRoute><Comb_pt_EAS></Comb_pt_EAS></PrivateRoute>}></Route>
           <Route exact path="/update_scan/:id" element={<PrivateRoute ><Update></Update></PrivateRoute>}></Route>
           <Route exact path="/update_meta_scan/:id" element={<PrivateRoute ><UpateMeta></UpateMeta></PrivateRoute>}></Route>
+          <Route exact path="/update_scantable/:id" element={<PrivateRoute ><UpdateScanTable></UpdateScanTable></PrivateRoute>}></Route>
+          <Route exact path="/update_hosttable/:id" element={<PrivateRoute ><UpdateHostTable></UpdateHostTable></PrivateRoute>}></Route>
+          <Route exact path="/update_metascantable/:id" element={<PrivateRoute ><UpdateMetaScanTable></UpdateMetaScanTable></PrivateRoute>}></Route>
+          <Route exact path="/update_metahosttable/:id" element={<PrivateRoute ><UpdateMetaHostTable></UpdateMetaHostTable></PrivateRoute>}></Route>
+          <Route exact path="/update_metaservicetable/:id" element={<PrivateRoute ><UpdateMetaServiceTable></UpdateMetaServiceTable></PrivateRoute>}></Route>
+          <Route exact path="/update_metavulenrabilitytable/:id" element={<PrivateRoute ><UpdateMetaVulnerability></UpdateMetaVulnerability></PrivateRoute>}></Route>
           <Route exact path="/addScan" element={<PrivateRoute ><Add></Add></PrivateRoute>}></Route>
           <Route exact path='/addscanTable' element={<PrivateRoute><AddScanTable></AddScanTable></PrivateRoute>}></Route>
           <Route exact path="/addMeta" element={<PrivateRoute><MetaAdd></MetaAdd></PrivateRoute>}></Route>

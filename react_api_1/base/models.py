@@ -199,7 +199,7 @@ class Scan(models.Model):
     """
 
     scan_id = models.AutoField(primary_key=True, unique=True)
-    host = models.ForeignKey(Host, on_delete=models.RESTRICT)
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
     current_status = models.CharField(
         max_length=30,
         choices=(
@@ -313,13 +313,13 @@ class PT_Age(models.Model):
     vuln_risk_score=models.IntegerField(null=True,blank=True)
     vuln_tags=models.CharField(max_length=30,null=True,blank=True)
     
-# class Users(models.Model):
-#     username=models.CharField(max_length=50,primary_key=True)
-#     password=models.CharField(max_length=50)
-#     permission_Staff_status=models.BooleanField()
-#     permission_active_status=models.BooleanField()
-#     permission_Superuser_status=models.BooleanField()
-#     privilege=models.JSONField(max_length=256,blank=True,null=True)
+class Users(models.Model):
+    username=models.CharField(max_length=50,primary_key=True)
+    password=models.CharField(max_length=50)
+    permission_Staff_status=models.BooleanField()
+    permission_active_status=models.BooleanField()
+    permission_Superuser_status=models.BooleanField()
+    privilege=models.JSONField(max_length=256,blank=True,null=True)
 
-#     def __str__(self):
-#         return self.username
+    def __str__(self):
+        return self.username

@@ -16,8 +16,10 @@
     "ag-grid-enterprise": "^32.0.2",
     "ag-grid-react": "^32.0.2",
     "apexcharts": "^4.1.0",
+    "buffer": "^6.0.3",
     "cors": "^2.8.5",
     "flowbite": "^2.4.1",
+    "flowbite-react": "^0.10.2",
     "js-cookie": "^3.0.5",
     "react": "^17.0.0 || ^18.0.0",
     "react-apexcharts": "^1.6.0",
@@ -29,6 +31,7 @@
     "react-router-dom": "^6.25.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
+    "react-simple-captcha": "^9.3.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
