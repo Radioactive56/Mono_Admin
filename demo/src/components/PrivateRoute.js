@@ -17,7 +17,7 @@ export default function PrivateRoute({ children }) {
         fetch(`${API_URL}/validate/`,{
             method:"GET",
             headers:{
-                'Authorization': `Token ${token}`
+                'Authorization': `Bearer ${token}`
             },
         })
         .then(response=>{

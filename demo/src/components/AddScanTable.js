@@ -1,30 +1,38 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router'
+import Cookies from 'js-cookie';
 import Navbar from './Navbar';
 import { API_URL } from '../App';
 
 export default function AddScanTable() {
     const navigate = useNavigate();
+    const token = Cookies.get('Token'); 
     const { register, handleSubmit, formState: { errors }} = useForm();
     const onSubmit=(data)=>{
-        const api_url=`${API_URL}/addScan/`;
+        const api_url=`${API_URL}/addscantable/`;
 
         fetch(api_url,{
             method:"POST",
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body:JSON.stringify(data)
 
         })
         .then(response=>{
-            if (response.ok){
-                console.log("Data Submitted successfully")
-                navigate('/database');
+            if (!response.ok){
+                alert('error in sending data....')
+                // console.log("Data Submitted successfully")
+                // navigate('/database');
+            }
+            else if(response.status === 403){
+              alert("You dont have the permission to perform this function.....")
             }
             else{
-                alert("Error in Submitting Data!")
+              console.log("Data Submitted successfully")
+              navigate('/database');
             }
         })
     }
@@ -44,7 +52,7 @@ export default function AddScanTable() {
      <div style={{paddingBottom:"4%"}}>
        <label>Host Id:</label>
        <input
-         {...register('host', { required: 'Name is required' })} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" required
+         {...register('host')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username" required
        />
        {/* {errors.name &&<p>{errors.name.message}</p>} */}
      </div>       
@@ -160,7 +168,7 @@ export default function AddScanTable() {
      </div>
      <div style={{paddingBottom:"4%"}}>
        <label>Meta Add Time :</label>
-       <input
+       <input type='datetime-local'
          {...register('meta_add_time')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
        />
        {/* {errors.name &&<p>{errors.name.message}</p>} */}

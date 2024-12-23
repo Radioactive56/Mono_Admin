@@ -10,27 +10,34 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import Navbar from './Navbar';
 import MetaScan from './MetaScan';
-import { useNavigate } from 'react-router';
+import { useNavigate, useRouteLoaderData } from 'react-router';
 import { API_URL } from '../App';
+import Cookies from 'js-cookie';
+import { WindowSharp } from '@mui/icons-material';
 
 const CustomToolbar=({selected_scan_id,})=>{
     const navigate = useNavigate();
-
+    const token = Cookies.get('Token'); 
     const handleDelete = async()=>{
         fetch(`${API_URL}/scanDelete/`,{
             method:"POST",
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body:JSON.stringify(selected_scan_id)
     })
     .then(response=>{
-        if (!response.ok){
-            alert("Encountering Error in deleting the data")
+        if (response.status===403){
+            alert("You dont have the permission to delete....")
+            window.location.reload('/scans')
+        }
+        else if (!response.ok){
+          console.error('Error in calling the delete_multiple_scan api....')
         }
         else{
-            alert('Data Deleted successfully redirecting........')
-            navigate('/dashboard')
+            alert('Data Deleted successfully.... please refresh the page if the changes are not shown...')
+            window.location.reload('/scans')
         }
     })
     }
@@ -109,17 +116,27 @@ export default function Scans() {
 
 
     useEffect(() => {
-        const nmap_url = '/api/nmap/';
+        const nmap_url = `${API_URL}/nmap/`;
             setloading(true);
             fetch(nmap_url)
               .then(response => {
-                if (!response.ok) {
-                  console.log("Error!!!!")
+                if (response.status === 404) {
+                  throw new Error('You dont have the permission to view this table........')
                 }
-                return response.json();
+                else if (response.ok){
+                  return response.json();
+                }
+                else{
+                  console.error('Error in calling nmap api.......')
+                }
               })
               .then(data => {
                 setnmap_data(data);
+              })
+              .catch(error=>{
+                console.log(error)
+                alert('You dont have the permission to view this table........')
+                setnmap_data([]);
               })
               .finally(()=>{
                 setloading(false);
@@ -175,7 +192,6 @@ export default function Scans() {
         set_selected_scan_id(newSelection);
       };
     
-    console.log(selected_scan_id);
 
     return (
         <>

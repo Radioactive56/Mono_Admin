@@ -2,33 +2,26 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router'
 import Navbar from './Navbar';
+import Cookies from 'js-cookie';
 import { _getAbsoluteHeight } from 'ag-grid-enterprise';
 import { API_URL } from '../App';
 
 export default function Update() {
     const {id}=useParams();
     console.log(id);
+    const token = Cookies.get('Token'); 
     const navigate=useNavigate();
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-    const handleClick=async()=>{
-      fetch(`${API_URL}/metaDelete/${id}/`,{
-        method:"DELETE",
-      })
-        .then((response)=>{
-            if (!response.ok){
-                console.log('error calling api');
-            }
-            else{
-                alert('Data Deleted Successfully!')
-                navigate('/scans');
-            }
-        })
-    }
-
     useEffect(()=>{
         if (id){
-        fetch(`${API_URL}/getmeta/${id}`)
+        fetch(`${API_URL}/getmeta/${id}`,{
+          method:'GET',
+          headers:{
+             'Content-Type':'application/json',
+              'Authorization': `Bearer ${token}`
+          }
+        })
         .then((response)=>{
             if (!response.ok){
                 console.log('error calling api');
@@ -46,10 +39,11 @@ export default function Update() {
     const onSubmit=(data)=>{
         console.log(data);
 
-        fetch(`http://localhost:8000/api/metaUpdate/${id}/`,{
+        fetch(`${API_URL}/metaUpdate/${id}/`,{
             method:"PUT",
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body:JSON.stringify(data),
         })
@@ -78,48 +72,48 @@ export default function Update() {
       <div style={{paddingBottom:"4%"}}>
         <label>Scan ID:</label>
         <input
-          {...register('scan_id')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('scan_id')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div>
       <div style={{paddingBottom:"4%"}}>
         <label>Ip Address:</label>
         <input
-          {...register('Ip')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('Ip')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div>
       <div style={{paddingBottom:"4%"}}>
         <label>Send Status</label>
         <input
-          {...register('Send_status')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('Send_status')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div>
       <div style={{paddingBottom:"4%"}}>
         <label>Meta ID :</label>
         <input
-          {...register('Meta_id')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('Meta_id')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div>
       <div>
         <label>Meta Start Time: </label>
         <input
-          {...register('Meta_start_time')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('Meta_start_time')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div><div>
         <label>Meta Stop Time: </label>
         <input
-          {...register('Meta_stop_time')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('Meta_stop_time')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div>
       <div style={{paddingBottom:"4%"}}>
         <label>Scan Status :</label>
         <input
-          {...register('Meta_scan_status')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username"
+          {...register('Meta_scan_status')} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
         />
         {/* {errors.name &&<p>{errors.name.message}</p>} */}
       </div>
